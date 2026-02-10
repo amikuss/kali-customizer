@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-git clone git@github.com:amikuss/kali-customizer.git
+git clone https://github.com/amikuss/kali-customizer.git
 cd kali-customizer
 WD=$(pwd)
 
@@ -32,6 +32,8 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io
 
 sudo usermod -aG docker $USER
+echo "Reloading group membership..."
+newgrp docker
 
 echo "[+] Docker installed:"
 echo "$(docker --version)"
@@ -43,8 +45,8 @@ echo "$(docker compose version)"
 
 echo "[+] Installing custom .zshrc..."
 
-if [ -f "./files/kali-zshrc" ]; then
-    cp ./files/kali-zshrc ~/.zshrc
+if [ -f "./configs/kali-zshrc" ]; then
+    cp ./configs/kali-zshrc ~/.zshrc
 else
     echo "[!] kali-zshrc not found in current directory"
 fi
@@ -55,12 +57,12 @@ fi
 
 echo "[+] Installing Exegol..."
 
-pipx install exegol || true
+pipx install exegol
 
 echo "alias exegol='sudo -E ~/.local/bin/exegol'" >>~/.zshrc
 
 # Non-interactive install (auto-yes)
-exegol install free --accept-eula
+sudo exegol install free --accept-eula
 
 ############################
 # 4. Install BloodHound CE
