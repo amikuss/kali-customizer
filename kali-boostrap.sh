@@ -31,9 +31,13 @@ curl -fsSL https://download.docker.com/linux/debian/gpg |
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io
 
-sudo usermod -aG docker $USER
-echo "Reloading group membership..."
-newgrp docker
+if ! groups $USER | grep -q docker; then
+    sudo usermod -aG docker $USER
+    echo ""
+    echo "Docker installed successfully."
+    echo "⚠️  You must log out and back in before using Docker without sudo."
+    exit
+fi
 
 echo "[+] Docker installed:"
 echo "$(docker --version)"
@@ -62,7 +66,7 @@ pipx install exegol
 echo "alias exegol='sudo -E ~/.local/bin/exegol'" >>~/.zshrc
 
 # Non-interactive install (auto-yes)
-sudo exegol install free --accept-eula
+exegol install free --accept-eula
 
 ############################
 # 4. Install BloodHound CE
